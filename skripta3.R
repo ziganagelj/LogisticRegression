@@ -3,8 +3,8 @@ library(ggplot2)
 
 # load('env.RData')
 set.seed(24)
-k <- 10000
-m <- 1000
+k <- 100000
+m <- 10000
 # najrepj ti k + 2000 zato da povem o hkrathnem testirnaju hipotez, poltem damo vzorec na 10000, naredi loop za k, drugac eje komentar da ker subsamplamo iz velike populacije ni tok velika tezava hkratnega testiranja hipotez, drugace bi pa tudi to bil problem
 # I STADIJ ----
 # generirali bomo vecjo populacijo torej 5000 vzorcev, da potem subsamplamo in zagotovimo da je 150 operacij vsakega tipa
@@ -109,4 +109,26 @@ table.list <- list(stadij_H0 = table.stadij_H0,
                    zaplet_H0 = table.zaplet_H0,
                    zaplet_HA = table.zaplet_HA)
 
+params.pop.stadij <- data.frame(stadij.verjetnosti)
+rownames(params.pop.stadij) <- paste('Stadij', 1:4)
+
+params.pop.zaplet <- data.frame(zaplet.verjetnost)
+rownames(params.pop.zaplet) <- paste('Stadij', 1:10)
+
+colnames(params.pop.stadij) <- colnames(params.pop.zaplet) <- 'verjtenost'
+
+params.pop <- list(stadij = params.pop.stadij,
+                   zaplet = params.pop.zaplet)
+
+params.hypothesis <- data.frame(stadij = c(0, 0, 0.1, 0.6, -1.2, NA, NA, NA, NA, NA, NA),
+                                zaplet = c(0, -3.5, 3, -2.5, 2, -1.5, 1, -0.8, 0.6, -0.4, 0.2))
+
+rownames(params.hypothesis) <- paste0('beta',0:10)
+
+params.hypothesis <- params.hypothesis
+
+
+
 saveRDS(table.list, "./table_list.rds")
+saveRDS(params.pop, "./params_pop.rds")
+saveRDS(params.hypothesis, "./params_hypothesis.rds")

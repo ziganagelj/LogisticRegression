@@ -1,0 +1,235 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx} % extra features for tabular environment
+\usepackage[margin=1in,letterpaper]{geometry} % decreases margins
+\usepackage{cite} % takes care of citations
+\usepackage[final]{hyperref} % adds hyper links inside the generated pdf file
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[toc,page]{appendix}
+\graphicspath{ {./images/} }
+
+% https://www.overleaf.com/project/5c33a36d705dd34ecb9180c2
+
+\hypersetup{
+	colorlinks=true,       % false: boxed links; true: colored links
+	linkcolor=blue,        % color of internal links
+	citecolor=blue,        % color of links to bibliography
+	filecolor=magenta,     % color of file links
+	urlcolor=blue         
+}
+
+\usepackage{Sweave}
+\begin{document}
+\input{seminarska-concordance}
+
+
+\title{\Large{Predicting League of Legends match outcome with Bayesian methods}}
+\author{Z. Nagelj}
+\date{\today}
+\maketitle
+
+
+\section{Uvod}
+Logisticna regresijska se uporablja za analizo povezavo med kategoricno odvisno spremenljivko in neodvisnimi  spremenljivkami.Polege logisticne regresije se za analizo kategoricnih spremenljivk uporablja diskriminantna analiza, ki za razliko od logisticne regresije predpostavlja normalno porazdelitev neodvisnih spremenljivk.
+
+
+\section{Logisticna regresija}
+Kot vhodni podatek za logisticno regresijo dobimo podatkovni set N tock. Vsaka i-ta tocko sestavlja set m-tih neodvisnih spremenljivk in kategoricna odvisna spremenljivka $Y_i$ z dvema možnima izidoma.
+
+
+\subsection{Logit in logisticna transormacija}
+Naši kategoricni odvisni spremenljivki najprej dodelimo numericne vrednost (0 in 1). Povprecje na vzorcu predstavlja delež ugodnih izidov \emph{p}, razmerje $p/(1-p)$ pa obeti (odds). Logit transormacijo  definiramo kot logaritem obetov (log odds):
+$$l = logit(p) = \log{\frac{p}{1-p}} $$
+
+\noindent S pomocjo te transformacije preidemo iz omejene zaloge vrednosti p na intervalu $[0,1]$, na obete $p/(1-p)$ omejene z zalogov vrednosti $[0, \infty)$ in na koncu na logaritem obetov z zalogo vrednosti $(-\infty, \infty)$. Inverzno transormacijo imenujemo logisticna transformacija:
+$$p = \text{logistic}(l)=\frac{\exp{l}}{1 + \exp{l}}$$
+
+\noindent S transformacijo se izognemo problemu omejene zaloge vrednosti odvisne spremenljivke. Potencialno bi lahko izbrali tudi kakšno drugo transormacijo (probit).
+
+\subsection{Logisticni model}
+Kategoricno odvisno spremenljivko definiramo kot slucajno spremenljivko $Y_i$porazdeljeno po Bernoulliju s pricakovano vrednostjo $p_i$. Vsak izid je torej dolocen s svojo neznano verjetnostjo $p_i$, ki je dolocena na podlagi neodvisnih spremenljivk.
+\newpage
+
+$$Y_i | x_{1,i},...,x_{m,i}\sim \text{Bernoulli}(p_i)$$
+$$E[Y_i | x_{1,i},...,x_{m,i}] = p_i$$
+$$P(Y_i = y| x_{1,i},...,x_{m,i}) = p_i^y(1-p_i)^{(1-y)}$$
+
+
+\noindent Ideja je zelo podobna kot pri linearni regressiji, torej verjetnost $p_i$ modeliramo kot linearno kombinacijo neodvisnih spremenljivk. Razlika je v tem, da verjetnosti transformiramo s pomocjo logit funkcije. V modelu nastopa dodaten intercept clen, zato imamo $m + 1$ regresijskih koficientov $\beta$.
+
+$$\text{logit}(E[Y_i|X_i]) = logit(p_i) = \log{\frac{p_i}{1-p_i}} = X_i \beta$$
+
+\noindent Oziroma:
+
+$$E[Y_i|X_i] = p_i = \text{logit}^{-1}(X_i \beta) = \frac{1}{1+\exp^{-X_i \beta}}$$
+$$P[Y_i = y_i|X_i] = p_i^y(1-p_i)^{1-y} = \frac{\exp^{y_i X_i \beta}}{1+\exp^{X_i \beta}}$$
+
+
+\subsection{Dolocanje vrednosti regresijski koficientov}
+Regresijski koficienti in verjetnosti $p_i$ so dolocene optimizacijo, na primer MLE. Za lažjo predstavo si najprej ogledamo MLE za enostaven primer Bernoullija:
+
+\subsection{MLE za Bernoulli($p$)}
+Zapišemo enacbo za verjetje in jo logaritmiramo. 
+$$L = \prod_{i=1}^n p^{Y_i}(1-p)^{1-Y_i}=p^{\sum_{i=1}^n Y_i}(1-p)^{n-\sum_{i=1}^n Y_i}$$
+$$l = \log{(L)} = \sum_{i=1}^n Y_i \log{(p)} + (n-\sum_{i=1}^n Y_i)\log{(1-p)}$$
+
+\noindent Cenilko za $\hat{p}$ dolocimo s prvim parcialnim odvodom, ki ga enacimo z 0. Za asimptotski interval zaupanja cenilke dolocimo Fisherjevo informacijsko matriko. Saj populacijske vrednosti $p$ ne poznamo Fisherjevo informacijo dolocimo z oceno $\hat{p}$.
+
+$$\hat{p}=\frac{1}{n}\sum_{i = 1}^n Y_i$$
+$$I(p) = E[-\frac{\partial^2 l}{\partial p^2}]= \frac{1}{p(1-p)}$$
+$$\hat{(var)} = \frac{1}{nI(\hat{p})} = \frac{\hat{p}(1-\hat{p})}{n}$$
+$$\hat{(SE)} = \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
+
+\noindent Za velik n je naša cenilka porazdeljena približno normalno:
+$$\hat{p} \sim_{CLI} \text{Normal}(p, \frac{p(1-p)}{n})$$
+
+
+\subsection{MLE za Bernoulli($p_i$)}
+Saj ima pri logisicne regresije vsak izid svojo verjetnost $p_i$ je naša enacba za verjetje naslednja:
+
+$$L = \prod_{i=1}^n p_i^{Y_i}(1-p_i)^{1-Y_i}=p_i^{\sum_{i=1}^n Y_i}(1-p_i)^{n-\sum_{i=1}^n Y_i} = 
+(\frac{\exp^{X_i \beta}}{1+\exp^{X_i \beta}})^{\sum_{i=1}^n Y_i}(\frac{1}{1+\exp^{X_i \beta}})^{n-\sum_{i=1}^n Y_i}$$
+
+$$l = \log{(L)} = \sum_{i=1}^n Y_i \log{(\frac{\exp^{X_i \beta}}{1+\exp^{X_i \beta}})} + (n-\sum_{i=1}^n Y_i)\log{(\frac{1}{1+\exp^{X_i \beta}})}$$
+
+\noindent Posamezne regresijske koficiente dobimo s parcialnim odvodom logaritma verjetja. Saj rešitev v zakljuceni formi ne obstaja uporabimo numerice metode (npr. Newtnova metoda). Prav tako dolocimo informacijsko matriko za dolocanje asimptotske kovariancne matrike in intervalov zaupanja.
+
+
+\section{Statisticno testiranje regresijskih koficientov}
+Za testiranje hipotez nenicelnosti regresijski koficientov sta v uporabi Waldov test in  test razmerja verjetij.
+
+\subsection{Waldov test}
+Waldov test se uporablja za dolocanje statisticne znacilnosti posameznih regresijskih koficientov (podobno kot t-test pri linearni regresiji). Za koficiente pridobljene z MLE je testna statistika naslednja:
+$$Z = \frac{\hat{\beta_i}}{\hat{SE}}$$
+
+\noindent Nicelelna hipoteza testira $H_0: \beta_i =0$. Kot velja za vse cenilke pridobljene po metodi najvecjega verjetja so te asimptotsko nepristranske (dosledne) in normalno porazdeljene okoli prave vrednosti z varianco $\frac{1}{nI(p)}$.
+
+\subsection{Test razmerja verjetij}
+Pri testu nas zanima logaritem Wilksovega lambda pri dveh razlicnih modelih, pri cemer je en model gnezden (podmnožica drugega). Primerjali bomo polni model s \textbf{k} regresijskimi koficienti in delni model z \textbf{m} regresijskimi koficienti, kjer je $\textbf{m} < \textbf{k}$. Nicelna hipoteza (delni model) trdi da so testirani regresijski koficienti enaki 0. Alternativna hipoteza (polni model) pa trdi, da so vsi regresijski koficienti razlicni od 0. Pod nicelno hipotezeo torej testiramo nicelnost k - m $\beta$. Naša testrna statistika je:
+$$LR = -2 \log{\Lambda} = -2 \log{\frac{L(H_0)}{L(H_A)}} = -2(l(H_0) - l(H_A))=-2(l(\hat{\beta}^{(0)}) - l(\hat{\beta}))$$
+Asimptotsko je ta porazdeljena s $\chi^2$ z k - m stopinjami prostosti. Test razmerja verjetij se od Waldovega testa razlikuje po tem, da je potrebno narediti dva modela pod razlicnimi hipotezami.
+
+\section{Naloga}
+\subsection{Opis}
+Na vzorcu bolnikov z rakom primerjamo dve vrsti operacije. Zanima nas ali obstaja povezanost s stadijem bolnika in ali ena vrsta operacije povzroca manj zapletov. Cilj naloge je analizirati napako I. reda pri testiranja hipotez na nacin, da testiramo vsako spremenljivko posebaj. 
+
+\subsection{Postopek testiranje}
+Sledili bomo naslednjim korakom:
+
+\subsubsection{Stadij}
+\begin{enumerate}
+  \item Generiranje podatkov pod dano hipotezo
+  \item Izdelava 4 modelov logisticne regresije z informacijo o posameznem stadiju
+  \item Pridobimo p-vrednosti Waldovega testa vseh 4 modelov z delnimi podatki
+  \item Izdelava 1 modela logisticne regresije z informacijo o vseh stadijh (1 spremenljivka)
+  \item Pridobimo p-vrednosti testa razmerja verjetij za model z vsemi podatki
+  \item Analiziramo porazdelitve p-vrednosti in primerjamo deleže zavrnjenih hipotez
+\end{enumerate}
+
+\subsubsection{Zaplet}
+\begin{enumerate}
+  \item Generiranje podatkov pod dano hipotezo
+  \item Izdelava 10 modelov logisticne regresije z informacijo o posameznem zapletu
+  \item Izdelava 1 modela logisticne regresije z informacijo o vseh zapletih (10 spremenljivk)
+  \item Pridobimo p-vrednosti Waldovega testa vseh 11 modelov
+  \item Analiziramo porazdelitve p-vrednosti in primerjamo deleže zavrnjenih hipotez
+\end{enumerate}
+
+
+\subsection{Pricakovani rezultati}
+Zagotovo, pricakujemo, da bo naveden nacin testiranja pri stadiju napacen, saj so stadiji med seboj neodvisni, cesar v modelih ne zajamemo. Prav tako v model ne vkljucimo informacije o ostalih stadijih in jih obravnavamo kot enakovredne. Pravilno bi stadij tako,  da ga v celoti vkljucimo v model ter z testom razmerja verjetij testiramo nenicelnost regresijskega koficienta.
+
+\noindent Pri obravnavi zapletov operacij, ob predpostavki da so si te neodvisni, predvidevam, da tak nacin testiranja ne bi bil napacen. V realnost pa temu zagotovo ni tako in so posamezni zapleti med seboj povezani, zato bi zagotovo naleteli na enake probleme kot pri testiranju posameznega stadija.
+
+\section{Podatki}
+\subsection{Generiranje}
+Saj je v nalogi doloceno, da je vzorec velik 300 pacientov, kjer vsaka polovica prejme en tip operacije, najprej generiramo vecji vzorec $k=10000$ bolnikov iz katerga bomo vzorcili. Pridobiti moramo vrednosti spremenljivke stadij in desetih spremenljivk zaplet.
+
+\subsubsection{Stadij}
+Definiramo populacijske verjenosti za vsak stadij (Tabela~\ref{table:1}), ter glede na njih s funkcijo sample izžrebamo stadij vsakega bolnika in dolocimo modelsko matriko. Verjetnosti stadijev se morajo sešteti v 1, saj so med seboj odvisni.
+
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Sun Apr 21 19:42:47 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & verjenost \\ 
+  \hline
+1 & 0.60 \\ 
+  2 & 0.25 \\ 
+  3 & 0.10 \\ 
+  4 & 0.05 \\ 
+   \hline
+\end{tabular}
+\caption{Populacijski verjenosti posameznega stadija raka} 
+\label{table:1}
+\end{table}
+\subsubsection{Zaplet}
+Definiramo populacijske verjenosti za vsak zaplet (Tabela~\ref{table:2}), ter glede na njih s funkcijo rbinom izžrebamo ali se je posamezen zaplet zgodil.
+
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Sun Apr 21 19:42:47 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & verjenost \\ 
+  \hline
+Stadij 1 & 0.10 \\ 
+  Stadij 2 & 0.12 \\ 
+  Stadij 3 & 0.14 \\ 
+  Stadij 4 & 0.16 \\ 
+  Stadij 5 & 0.18 \\ 
+  Stadij 6 & 0.20 \\ 
+  Stadij 7 & 0.30 \\ 
+  Stadij 8 & 0.40 \\ 
+  Stadij 9 & 0.50 \\ 
+  Stadij 10 & 0.60 \\ 
+   \hline
+\end{tabular}
+\caption{Populacijski verjenosti posameznega zaplete pri operaciji} 
+\label{table:2}
+\end{table}
+
+\subsubsection{Vzorec}
+Ko imamo dolocene vrednosti spremenljiv na podlagi definirane hipoteze (oz. regresijskih koficientov) dolocimo linearne kombinacije spremenljivk ter s pomocjo logit transformacije verjetnost za tip operacije za vsakega izmed $k$ bolnikov. Izbran tip operacij pridobimo iz Bernoullijeve porazdelitve, glede na $p_i$. \\
+Da zadostimo specifikacijam naloge iz vzorca $10000$ bolnikov ob vsaki izmed $m=1000$ iteracij nakljucno izžrebamo 150 operacij vsakega tipa.
+
+\subsection{Hipoteze}
+Podatke generiramo glede na 2 hipoteze, nicelno in alternativno. Glede na nicelno hipotezo so vsi regresijski koficienti enaki 0. Vrednosti regresijski koficientov pod alternativno hipotezo so vidni v Tabeli~\ref{table:3}.
+
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Sun Apr 21 19:42:47 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & stadij & zaplet \\ 
+  \hline
+beta0 & 0.00 & 0.00 \\ 
+  beta1 & 0.00 & -3.50 \\ 
+  beta2 & 0.10 & 3.00 \\ 
+  beta3 & 0.60 & -2.50 \\ 
+  beta4 & -1.20 & 2.00 \\ 
+  beta5 &  & -1.50 \\ 
+  beta6 &  & 1.00 \\ 
+  beta7 &  & -0.80 \\ 
+  beta8 &  & 0.60 \\ 
+  beta9 &  & -0.40 \\ 
+  beta10 &  & 0.20 \\ 
+   \hline
+\end{tabular}
+\caption{Vrednosti regresijski koficientov pri HA glede na neodvisno spremenljivko} 
+\label{table:3}
+\end{table}
+
+\end{document}
