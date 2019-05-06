@@ -57,6 +57,7 @@ GetAlpha <- function(data) {
   
   c('P(zavrneU)' = zavrnjene_U,
     'P(zavrneM)' = zavrnjene_M,
+    'P(zavrneU & zavrenM)' = round(zavrnjene_U_M, 3),
     'P(zavrneM | zavrenU)' = round(zavrnjene_U_M/zavrnjene_U, 3), 
     'P(zavrneU | zavrenM)' = round(zavrnjene_U_M/zavrnjene_M, 3))
 }
@@ -75,13 +76,16 @@ GetPlotUnivariate <- function(data, name) {
 }
 
 GetPlotMultivariate <- function(data, name) {
-  plt <- ggplot(data.frame(data[, , 1]), aes(x = M)) +
-    geom_histogram(aes(y = ..count../m), breaks = seq(0, 1, 0.1), fill = '#71a0c5') +
-    xlab("p-vrednost") + 
-    ylab("Relativna frekvenca") +
-    geom_vline(aes(xintercept = 0.05, color=("Stopnja značilnosti")), size=0.1 ,show.legend = FALSE) +
-    theme_minimal()
-  ggsave(paste0('./Images/', name, '_M.pdf'), plt, width = 6, height = 6)
+  for (v in unlist(dimnames(data)[3])) {
+    plt <- ggplot(data.frame(data[, , v]), aes(x = M)) +
+      geom_histogram(aes(y = ..count../m), breaks = seq(0, 1, 0.1), fill = '#71a0c5') +
+      xlab("p-vrednost") + 
+      ylab("Relativna frekvenca") +
+      geom_vline(aes(xintercept = 0.05, color=("Stopnja značilnosti")), size=0.1 ,show.legend = FALSE) +
+      theme_minimal()
+    ggsave(paste0('./Images/', name, '_M_', v, '.pdf'), plt, width = 6, height = 6)
+  }
+  
 }
 
 

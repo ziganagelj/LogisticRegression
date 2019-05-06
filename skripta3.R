@@ -34,7 +34,7 @@ stadij.data.H0 <- data.table(y = y.H0, S, stadij = factor(stadij))
 table(stadij.data.H0$y)
 
 # ALTERNATVINA DOMENVA, torej gregresijski koficient je različen od 0, v našem, primeru 2
-z.HA = 0 + c(0, 0.1, 0.6, -1.2) %*% t(S)    
+z.HA = 0 + c(0.1, 0.3, 0.6, -1.2) %*% t(S)    
 pr.HA = 1/(1+exp(-z.HA))
 y.HA = rbinom(k, 1, pr.HA)
 
@@ -113,14 +113,14 @@ params.pop.stadij <- data.frame(stadij.verjetnosti)
 rownames(params.pop.stadij) <- paste('Stadij', 1:4)
 
 params.pop.zaplet <- data.frame(zaplet.verjetnost)
-rownames(params.pop.zaplet) <- paste('Stadij', 1:10)
+rownames(params.pop.zaplet) <- paste('Zaplet', 1:10)
 
-colnames(params.pop.stadij) <- colnames(params.pop.zaplet) <- 'verjtenost'
+colnames(params.pop.stadij) <- colnames(params.pop.zaplet) <- 'verjetnost'
 
 params.pop <- list(stadij = params.pop.stadij,
                    zaplet = params.pop.zaplet)
 
-params.hypothesis <- data.frame(stadij = c(0, 0, 0.1, 0.6, -1.2, NA, NA, NA, NA, NA, NA),
+params.hypothesis <- data.frame(stadij = c(0, 0.1, 0.3, 0.6, -1.2, NA, NA, NA, NA, NA, NA),
                                 zaplet = c(0, -3.5, 3, -2.5, 2, -1.5, 1, -0.8, 0.6, -0.4, 0.2))
 
 rownames(params.hypothesis) <- paste0('beta',0:10)

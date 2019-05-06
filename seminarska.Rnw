@@ -195,5 +195,372 @@ print(xtable(params.hypothesis,
              table.placement = 'h'))
 @
 
+\newpage
+\section{Rezultati}
+Opazujemo velikost testa (Tabela~\ref{table:4}, ~\ref{table:6}) in moč (Tabela~\ref{table:5}, ~\ref{table:7}). Notacija P(zavrneX) predstavlja delež zavrnjenih ničelnih hipotez glede na tip modela. U v predstavlja model, ko upoštevamao le informacije o posameznem stadiju/zapletu, M pa predstavlja model z vsemi informacijami. Iz simulacije smo določili še verjetnosti, da oba testa zavrneta Hipotezo, ter pogojne verjetnosti glede na kaj prikaže prvi test. 
+
+V velikem številu raziskav si na tak način pomagamo pri izbiri neodvisnih spremenljivk. Torej za vsako izmed neodvisnih spremenljivk se izvede regresija in na podlagi tega določi katere spremenljivke bomo vključili v glavni model. Zato nas zanima s kašno verjetnostjo bomo spremenljivko s takšnim načinom pravilno izločili. To nam pove P(zavrneM | zavrneU). Velja seveda tudi obratno.
+\subsection{Stadij}
+Pri modeliranju posameznih stadijev, je v resnici naša ničelna hipoteza, da stadij_n nima vpliva na tip operacije, raziskovalno vprašanje pa se nanaša na stadij kot celota. Test je torej nesmiseln že z vidika raziskovalnega vprašanja. To se vidi tudi pri moči testa (Tabela~\ref{table:5}), kjer je moč pri pravem modelu v primerjavi z močjo posameznega modela precej večja, kot pri posameznih stadijih, še posebaj kjer je $\beta_S1$ blizu 0.
+
+Vidimo, da če gledamo velikosti posameznih testov so vsi približno 0.05. Rezultati nam jasno povejo P(zavrneM | zavrneU), da s takšnim načinom modeliranja, v določenih primerih spremenljivke po krivem izključimo v tudi do 60\% primerih.
+<<echo=FALSE, results=tex>>=
+print(xtable(table.list$stadij_H0,
+             caption = 'Verjetnosti zavrnitev pri H0',
+             digits = 3,
+             label = 'table:4',
+             table.placement = 'h'))
+@
+
+
+<<echo=FALSE, results=tex>>=
+print(xtable(table.list$stadij_HA,
+             caption = 'Verjetnosti zavrnitev pri HA',
+             digits = 3,
+             label = 'table:5',
+             table.placement = 'h'))
+@
+
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{.4\linewidth}
+    \centering
+    \includegraphics{stadij_H0_M_S1}
+    \subcaption{H0}
+    \label{fig:1a}
+  \end{minipage}%
+  \begin{minipage}[b]{.4\linewidth}
+    \centering
+    \includegraphics{stadij_HA_M_S1}
+    \subcaption{HA}
+    \label{fig:1b}
+  \end{minipage}
+  \caption{Porazdelitve p-vrednosti pridobljenih z LRT glede na hipotezo}
+  \label{fig:1}
+\end{figure}
+
+% % brejka
+
+\newpage
+\subsection{Zaplet}
+Pri testiranju z modelom s posameznihm zapletom testiramo ali posamezen zaplet vpliva pri izbiri tipa operacije. Polni model tesitra enako hipotezo, vendar ob upoštevanju drugih zapletov.
+
+V primeru zapletov, ki so neodvisno generirani, vidimo da je težava, ki smo jo izpostavili veliko manj prisotna, oziroma je skladanje z načinom, ko smo upoštevali posamezne zaplete in ko smo upoštevali vse zaplete, veliko večje (85\%).
+
+Ko testiramo hipoteze pod alternativno hipotezo opazimo, da je moč testa, ko upoštevamo vse zaplete večja, kot pri modelih s posameznimi zapleti.
+
+<<echo=FALSE, results=tex>>=
+print(xtable(table.list$zaplet_H0,
+             caption = 'Verjetnosti zavrnitev pri H0',
+             digits = 3,
+             label = 'table:6',
+             table.placement = 'h'))
+@
+
+<<echo=FALSE, results=tex>>=
+print(xtable(table.list$zaplet_HA,
+             caption = 'Verjetnosti zavrnitev pri HA',
+             digits = 3,
+             label = 'table:7',
+             table.placement = 'h'))
+@
+
+
+
+%\newpage
+%\subsubsection{H0}
+%
+%\begin{figure}[h]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z1}
+%    \subcaption{Zaplet 1 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z1}
+%    \subcaption{Zaplet 1 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z2}
+%    \subcaption{Zaplet 2 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z2}
+%    \subcaption{Zaplet 2 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri H0 gleda na zaplet in model (1/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+%\clearpage
+%\newpage
+%\begin{figure}[t]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z3}
+%    \subcaption{Zaplet 3 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z3}
+%    \subcaption{Zaplet 3 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%    \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z4}
+%    \subcaption{Zaplet 4 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z4}
+%    \subcaption{Zaplet 4 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z5}
+%    \subcaption{Zaplet 5 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z5}
+%    \subcaption{Zaplet 5 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%    \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z6}
+%    \subcaption{Zaplet 6 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z6}
+%    \subcaption{Zaplet 6 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri H0 gleda na zaplet in model (2/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+%\clearpage
+%\newpage
+%\begin{figure}[h]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z7}
+%    \subcaption{Zaplet 7 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z7}
+%    \subcaption{Zaplet 7 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z8}
+%    \subcaption{Zaplet 8 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z8}
+%    \subcaption{Zaplet 8 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z9}
+%    \subcaption{Zaplet 9 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z9}
+%    \subcaption{Zaplet 9 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_U_Z10}
+%    \subcaption{Zaplet 10 (beta = 0) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_H0_M_Z10}
+%    \subcaption{Zaplet 10 (beta = 0) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri H0 gleda na zaplet in model (3/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+%\clearpage
+%\newpage
+%\subsubsection{HA}
+%
+%\begin{figure}[h]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z1}
+%    \subcaption{Zaplet 1 (beta = -3.5) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z1}
+%    \subcaption{Zaplet 1 (beta = -3.5) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z2}
+%    \subcaption{Zaplet 2 (beta = 3) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z2}
+%    \subcaption{Zaplet 2 (beta = 3) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri HA gleda na zaplet in model (1/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+%\clearpage
+%\newpage
+%\begin{figure}[h]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z3}
+%    \subcaption{Zaplet 3 (beta = -2.5) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z3}
+%    \subcaption{Zaplet 3 (beta = -2.5) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%    \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z4}
+%    \subcaption{Zaplet 4 (beta = 2) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z4}
+%    \subcaption{Zaplet 4 (beta = 2) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z5}
+%    \subcaption{Zaplet 5 (beta = -1.5) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z5}
+%    \subcaption{Zaplet 5 (beta = -1.5) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%    \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z6}
+%    \subcaption{Zaplet 6 (beta = 1) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z6}
+%    \subcaption{Zaplet 6 (beta = 1) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri HA gleda na zaplet in model (2/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+%\clearpage
+%\newpage
+%\begin{figure}[h]
+%  \centering
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z7}
+%    \subcaption{Zaplet 7 (beta = -0.8) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z7}
+%    \subcaption{Zaplet 7 (beta = -0.8) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z8}
+%    \subcaption{Zaplet 8 (beta = 0.6) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z8}
+%    \subcaption{Zaplet 8 (beta = 0.6) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z9}
+%    \subcaption{Zaplet 9 (beta = -0.4) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z9}
+%    \subcaption{Zaplet 9 (beta = -0.4) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_U_Z10}
+%    \subcaption{Zaplet 10 (beta = 0.2) - U}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \begin{minipage}[b]{.4\linewidth}
+%    \centering
+%    \includegraphics{zaplet_HA_M_Z10}
+%    \subcaption{Zaplet 10 (beta = 0.2) - M}
+%    \label{fig:1b}
+%  \end{minipage}
+%  \caption{Porazdelitve p-vrednosti pri HA gleda na zaplet in model (3/3)}
+%  \label{fig:1}
+%\end{figure}
+%
+\clearpage
+\newpage
+\section{Zaključek}
 
 \end{document}
