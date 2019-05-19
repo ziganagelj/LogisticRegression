@@ -2,6 +2,7 @@ library(data.table)
 library(ggplot2)
 
 # load('env.RData')
+source('skripta3_func.R')
 set.seed(24)
 k <- 100000
 m <- 10000
