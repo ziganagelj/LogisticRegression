@@ -1,5 +1,5 @@
 \documentclass[letterpaper,11pt]{article}
-\usepackage[english]{babel}
+\usepackage[slovene]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{tabularx} % extra features for tabular environment
 \usepackage[margin=1in,letterpaper]{geometry} % decreases margins
@@ -31,7 +31,7 @@
 
 
 \title{\Large{Primerjava opisnih spremenljivk z logistično regresijo}}
-\author{Z. Nagelj}
+\author{Ž. Nagelj}
 \date{\today}
 \maketitle
 
@@ -43,18 +43,18 @@ params.hypothesis <- readRDS("./params_hypothesis.rds")
 @
 
 \section{Uvod}
-Logistična regresijska se uporablja za analizo povezav med kategorično odvisno spremenljivko in neodvisnimi  spremenljivkami. Poleg logistične regresije se za analizo kategoričnih spremenljivk uporablja diskriminantna analiza, ki za razliko od logistične regresije predpostavlja normalno porazdelitev neodvisnih spremenljivk.
+Logistična regresija se uporablja za analizo povezav med kategorično odvisno spremenljivko in poljubnimi neodvisnimi spremenljivkami. Poleg logistične regresije se za analizo kategoričnih spremenljivk uporablja diskriminantna analiza, ki za razliko od logistične regresije predpostavlja normalno porazdelitev neodvisnih spremenljivk.
 
 
 \section{Logistična regresija}
 Kot vhodni podatek za logistično regresijo dobimo podatkovni set N točk. Vsaka i-ta točko sestavlja set m-tih neodvisnih spremenljivk in kategorična odvisna spremenljivka $Y_i$ z dvema možnima izidoma.
 
 
-\subsection{Logit in logistična transormacija}
+\subsection{Logit in logistična transformacija}
 Naši kategorični odvisni spremenljivki najprej dodelimo numerične vrednost (0 in 1). Povprečje na vzorcu predstavlja delež ugodnih izidov \emph{p}, razmerje $p/(1-p)$ pa obeti (odds). Logit transormacijo  definiramo kot logaritem obetov (log odds):
 $$l = logit(p) = \log{\frac{p}{1-p}} $$
 
-\noindent S pomočjo te transformacije preidemo iz omejene zaloge vrednosti p na intervalu $[0,1]$, na obete $p/(1-p)$ omejene z zalogov vrednosti $[0, \infty)$ in na koncu na logaritem obetov z zalogo vrednosti $(-\infty, \infty)$. Inverzno transormacijo imenujemo logistična transformacija:
+\noindent S pomočjo te transformacije preidemo iz omejene zaloge vrednosti p na intervalu $[0,1]$, na obete $p/(1-p)$ omejene z zalogo vrednosti $[0, \infty)$ in na koncu na logaritem obetov z zalogo vrednosti $(-\infty, \infty)$. Inverzno transformacijo imenujemo logistična transformacija:
 $$p = \text{logistic}(l)=\frac{\exp{l}}{1 + \exp{l}}$$
 
 \noindent S transformacijo se izognemo problemu omejene zaloge vrednosti odvisne spremenljivke. Potencialno bi lahko izbrali tudi kakšno drugo transormacijo (probit).
@@ -68,7 +68,7 @@ $$E[Y_i | x_{1,i},...,x_{m,i}] = p_i$$
 $$P(Y_i = y| x_{1,i},...,x_{m,i}) = p_i^y(1-p_i)^{(1-y)}$$
 
 
-\noindent Ideja je zelo podobna kot pri linearni regressiji, torej verjetnost $p_i$ modeliramo kot linearno kombinacijo neodvisnih spremenljivk. Razlika je v tem, da verjetnosti transformiramo s pomočjo logit funkcije. V modelu nastopa dodaten intercept člen, zato imamo $m + 1$ regresijskih koficientov $\beta$.
+\noindent Ideja je zelo podobna kot pri linearni regresiji, torej verjetnost $p_i$ modeliramo kot linearno kombinacijo neodvisnih spremenljivk. Razlika je v tem, da verjetnosti transformiramo s pomočjo logit funkcije. V modelu nastopa dodaten intercept člen, zato imamo $m + 1$ regresijskih koeficientov $\beta$.
 
 $$\text{logit}(E[Y_i|X_i]) = logit(p_i) = \log{\frac{p_i}{1-p_i}} = X_i \beta$$
 
@@ -78,8 +78,8 @@ $$E[Y_i|X_i] = p_i = \text{logit}^{-1}(X_i \beta) = \frac{1}{1+\exp^{-X_i \beta}
 $$P[Y_i = y_i|X_i] = p_i^y(1-p_i)^{1-y} = \frac{\exp^{y_i X_i \beta}}{1+\exp^{X_i \beta}}$$
 
 
-\subsection{Določanje vrednosti regresijski koficientov}
-Regresijski koficienti in verjetnosti $p_i$ so določene optimizacijo, na primer MLE. Za lažjo predstavo si najprej ogledamo MLE za enostaven primer Bernoullija:
+\subsection{Določanje vrednosti regresijski koeficientov}
+Regresijski koeficienti in verjetnosti $p_i$ so določene optimizacijo, na primer MLE. Za lažjo predstavo si najprej ogledamo MLE za enostaven primer Bernoullia:
 
 \subsection{MLE za Bernoulli($p$)}
 Zapišemo enačbo za verjetje in jo logaritmiramo. 
@@ -98,33 +98,33 @@ $$\hat{p} \sim_{CLI} \text{Normal}(p, \frac{p(1-p)}{n})$$
 
 
 \subsection{MLE za Bernoulli($p_i$)}
-Saj ima pri logisicne regresije vsak izid svojo verjetnost $p_i$ je naša enačba za verjetje naslednja:
+Saj ima pri logistične regresije vsak izid svojo verjetnost $p_i$ je naša enačba za verjetje naslednja:
 
 $$L = \prod_{i=1}^n p_i^{Y_i}(1-p_i)^{1-Y_i}=p_i^{\sum_{i=1}^n Y_i}(1-p_i)^{n-\sum_{i=1}^n Y_i} = 
 (\frac{\exp^{X_i \beta}}{1+\exp^{X_i \beta}})^{\sum_{i=1}^n Y_i}(\frac{1}{1+\exp^{X_i \beta}})^{n-\sum_{i=1}^n Y_i}$$
 
 $$l = \log{(L)} = \sum_{i=1}^n Y_i \log{(\frac{\exp^{X_i \beta}}{1+\exp^{X_i \beta}})} + (n-\sum_{i=1}^n Y_i)\log{(\frac{1}{1+\exp^{X_i \beta}})}$$
 
-\noindent Posamezne regresijske koficiente dobimo s parcialnim odvodom logaritma verjetja. Saj rešitev v zaključeni formi ne obstaja uporabimo numeriče metode (npr. Newtnova metoda). Prav tako določimo informacijsko matriko za določanje asimptotske kovariančne matrike in intervalov zaupanja.
+\noindent Posamezne regresijske koeficiente dobimo s parcialnim odvodom logaritma verjetja. Saj rešitev v zaključeni formi ne obstaja uporabimo numerične metode (npr. Newtonova metoda). Prav tako določimo informacijsko matriko za določanje asimptotske kovariančne matrike in intervalov zaupanja.
 
 
-\section{Statistično testiranje regresijskih koficientov}
+\section{Statistično testiranje regresijskih koeficientov}
 Za testiranje hipotez neničelnosti regresijski koficientov sta v uporabi Waldov test in  test razmerja verjetij.
 
 \subsection{Waldov test}
-Waldov test se uporablja za določanje statistične značilnosti posameznih regresijskih koficientov (podobno kot t-test pri linearni regresiji). Za koficiente pridobljene z MLE je testna statistika naslednja:
+Waldov test se uporablja za določanje statistične značilnosti posameznih regresijskih koeficientov (podobno kot t-test pri linearni regresiji). Za koeficiente pridobljene z MLE je testna statistika naslednja:
 $$Z = \frac{\hat{\beta_i}}{\hat{SE}}$$
 
-\noindent Ničelelna hipoteza testira $H_0: \beta_i =0$. Kot velja za vse cenilke pridobljene po metodi največjega verjetja so te asimptotsko nepristranske (dosledne) in normalno porazdeljene okoli prave vrednosti z varianco $\frac{1}{nI(p)}$.
+\noindent Ničelna hipoteza testira $H_0: \beta_i =0$. Kot velja za vse cenilke pridobljene po metodi največjega verjetja so te asimptotsko nepristranske (dosledne) in normalno porazdeljene okoli prave vrednosti z varianco $\frac{1}{nI(p)}$.
 
 \subsection{Test razmerja verjetij}
-Pri testu nas zanima logaritem Wilksovega lambda pri dveh različnih modelih, pri čemer je en model gnezden (podmnožica drugega). Primerjali bomo polni model s \textbf{k} regresijskimi koficienti in delni model z \textbf{m} regresijskimi koficienti, kjer je $\textbf{m} < \textbf{k}$. Ničelna hipoteza (delni model) trdi da so testirani regresijski koficienti enaki 0. Alternativna hipoteza (polni model) pa trdi, da so vsi regresijski koficienti različni od 0. Pod ničelno hipotezeo torej testiramo ničelnost k - m $\beta$. Naša testrna statistika je:
+Pri testu nas zanima logaritem Wilksova lambda pri dveh različnih modelih, pri čemer je en model ugnezden (podmnožica drugega). Primerjali bomo polni model s \textbf{k} regresijskimi koeficienti in delni model z \textbf{m} regresijskimi koeficienti, kjer je $\textbf{m} < \textbf{k}$. Ničelna hipoteza (delni model) trdi da so testirani regresijski koficienti enaki 0. Alternativna hipoteza (polni model) pa trdi, da so vsi regresijski koeficienti različni od 0. Pod ničelno hipotezo torej testiramo ničelnost k - m $\beta$. Naša testna statistika je:
 $$LR = -2 \log{\Lambda} = -2 \log{\frac{L(H_0)}{L(H_A)}} = -2(l(H_0) - l(H_A))=-2(l(\hat{\beta}^{(0)}) - l(\hat{\beta}))$$
 Asimptotsko je ta porazdeljena s $\chi^2$ z k - m stopinjami prostosti. Test razmerja verjetij se od Waldovega testa razlikuje po tem, da je potrebno narediti dva modela pod različnimi hipotezami.
 
 \section{Naloga}
 \subsection{Opis}
-Na vzorcu bolnikov z rakom primerjamo dve vrsti operacije. Zanima nas ali obstaja povezanost tipa operacije s stadijem bolnika in ali ena vrsta operacije povzroča manj zapletov. Cilj naloge je analizirati napako I. reda pri testiranja hipotez na način, da testiramo vsako spremenljivko posebaj. 
+Na vzorcu bolnikov z rakom primerjamo dve vrsti operacije. Zanima nas ali obstaja povezanost tipa operacije s stadijem bolnika in ali ena vrsta operacije povzroča manj zapletov. Cilj naloge je analizirati napako I. reda pri testiranja hipotez na način, da testiramo vsako spremenljivko posebej. 
 
 \subsection{Postopek testiranje}
 Sledili bomo naslednjim korakom:
@@ -134,7 +134,7 @@ Sledili bomo naslednjim korakom:
   \item Generiranje podatkov pod dano hipotezo
   \item Izdelava 4 modelov logistične regresije z informacijo o posameznem stadiju
   \item Pridobimo p-vrednosti Waldovega testa vseh 4 modelov z delnimi podatki
-  \item Izdelava 1 modela logistične regresije z informacijo o vseh stadijh (1 spremenljivka)
+  \item Izdelava 1 modela logistične regresije z informacijo o vseh stadijih (1 spremenljivka)
   \item Pridobimo p-vrednosti testa razmerja verjetij za model z vsemi podatki
   \item Analiziramo porazdelitve p-vrednosti in primerjamo deleže zavrnjenih hipotez
 \end{enumerate}
@@ -150,31 +150,31 @@ Sledili bomo naslednjim korakom:
 
 
 \subsection{Pričakovani rezultati}
-Zagotovo, pričakujemo, da bo naveden način testiranja pri stadiju napačen, saj so stadiji med seboj odvisni, česar v modelih ne zajamemo. Prav tako v model ne vključimo informacije o ostalih stadijih in jih obravnavamo kot enakovredne. Pravilno bi stadij modelirali tako,  da ga v celoti vključimo v model ter s testom razmerja verjetij testiramo neničelnost regresijskega koficienta.
+Zagotovo, pričakujemo, da bo naveden način testiranja pri stadiju napačen, saj so stadiji med seboj odvisni, česar v modelih ne zajamemo. Prav tako v model ne vključimo informacije o ostalih stadijih in jih obravnavamo kot enakovredne. Pravilno bi stadij modelirali tako,  da ga v celoti vključimo v model ter s testom razmerja verjetij testiramo neničelnost regresijskega koeficienta.
 
 \noindent Pri obravnavi zapletov operacij, ob predpostavki da so si te neodvisni, predvidevam, da tak način testiranja ne bi bil napačen. V realnost pa temu zagotovo ni tako in so posamezni zapleti med seboj povezani, zato bi zagotovo naleteli na enake probleme kot pri testiranju posameznega stadija.
 
 \section{Podatki}
 \subsection{Generiranje}
-Saj je v nalogi določeno, da je vzorec velik 300 pacientov, kjer vsaka polovica prejme en tip operacije, najprej generiramo večji vzorec $k=10000$ bolnikov iz katerga bomo vzorčili. Pridobiti moramo vrednosti spremenljivke stadij in desetih spremenljivk zaplet.
+Saj je v nalogi določeno, da je vzorec velik 300 pacientov, kjer vsaka polovica prejme en tip operacije, najprej generiramo večji vzorec $k=10000$ bolnikov iz katerega bomo vzorčili. Pridobiti moramo vrednosti spremenljivke stadij in desetih spremenljivk zaplet.
 
 \subsubsection{Stadij}
-Definiramo populacijske verjenosti za vsak stadij (Tabela~\ref{table:1}), ter glede na njih s funkcijo \emph{sample} izžrebamo stadij vsakega bolnika in določimo modelsko matriko. Verjetnosti stadijev se morajo sešteti v 1.
+Definiramo populacijske verjetnosti za vsak stadij (Tabela~\ref{table:1}), ter glede na njih s funkcijo \emph{sample} izžrebamo stadij vsakega bolnika in določimo modelsko matriko. Verjetnosti stadijev se morajo sešteti v 1.
 
 <<echo=FALSE, results=tex>>=
 print(xtable(params.pop$stadij,
-             caption = 'Populacijski verjenosti posameznega stadija raka',
+             caption = 'Populacijski verjetnosti posameznega stadija raka',
              digits = 2,
              label = 'table:1',
              table.placement = 'h'))
 @
 
 \subsubsection{Zaplet}
-Definiramo populacijske verjenosti za vsak zaplet (Tabela~\ref{table:2}), ter glede na njih s funkcijo \emph{rbinom} izžrebamo ali se je posamezen zaplet zgodil.
+Definiramo populacijske verjetnosti za vsak zaplet (Tabela~\ref{table:2}), ter glede na njih s funkcijo \emph{rbinom} izžrebamo ali se je posamezen zaplet zgodil.
 
 <<echo=FALSE, results=tex>>=
 print(xtable(params.pop$zaplet,
-             caption = 'Populacijski verjenosti posameznega zaplete pri operaciji',
+             caption = 'Populacijski verjetnosti posameznega zaplete pri operaciji',
              digits = 2,
              label = 'table:2',
              table.placement = 'h'))
@@ -182,14 +182,14 @@ print(xtable(params.pop$zaplet,
 
 
 \subsubsection{Vzorec}
-Ko imamo določene vrednosti spremenljivk na podlagi definirane hipoteze (oz. regresijskih koficientov) določimo linearne kombinacije spremenljivk ter s pomočjo logit transformacije verjetnost za tip operacije za vsakega izmed $k$ bolnikov. Izbran tip operacij pridobimo iz Bernoullijeve porazdelitve, glede na $p_i$. Da zadostimo specifikacijam naloge iz vzorca $100000$ bolnikov ob vsaki izmed $m=10000$ ponovitev naključno izžrebamo 150 operacij vsakega tipa.
+Ko imamo določene vrednosti spremenljivk na podlagi definirane hipoteze (oz. regresijskih koeficientov) določimo linearne kombinacije spremenljivk ter s pomočjo logit transformacije verjetnost za tip operacije za vsakega izmed $k$ bolnikov. Izbran tip operacij pridobimo iz Bernoullijeve porazdelitve, glede na $p_i$. Da zadostimo specifikacijam naloge iz vzorca $100000$ bolnikov ob vsaki izmed $m=10000$ ponovitev naključno izžrebamo 150 operacij vsakega tipa.
 
 \subsection{Hipoteze}
-Podatke generiramo glede na 2 hipoteze, ničelno in alternativno. Glede na ničelno hipotezo so vsi regresijski koficienti enaki 0. Vrednosti regresijski koficientov pod alternativno hipotezo so vidni v Tabeli~\ref{table:3}. Kot navedeno zgoraj, naši testi vedno testirajo ničelnost regresijskih koficientov.
+Podatke generiramo glede na 2 hipoteze, ničelno in alternativno. Glede na ničelno hipotezo so vsi regresijski koficienti enaki 0. Vrednosti regresijski koeficientov pod alternativno hipotezo so vidni v Tabeli~\ref{table:3}. Kot navedeno zgoraj, naši testi vedno testirajo ničelnost regresijskih koeficientov.
 
 <<echo=FALSE, results=tex>>=
 print(xtable(params.hypothesis,
-             caption = 'Vrednosti regresijski koficientov pri HA glede na neodvisno spremenljivko',
+             caption = 'Vrednosti regresijski koeficientov pri HA glede na neodvisno spremenljivko',
              digits = 2,
              label = 'table:3',
              table.placement = 'h'))
@@ -197,11 +197,11 @@ print(xtable(params.hypothesis,
 
 \newpage
 \section{Rezultati}
-Opazujemo velikost testa (Tabela~\ref{table:4}, ~\ref{table:6}) in moč (Tabela~\ref{table:5}, ~\ref{table:7}). Notacija P(zavrneX) predstavlja delež zavrnjenih ničelnih hipotez glede na tip modela. U predstavlja model, ko upoštevamao le informacije o posameznem stadiju/zapletu, M pa predstavlja model z vsemi informacijami. Iz simulacije smo določili še verjetnosti, da oba testa hkrati zavrneta ničelno hipotezo, ter pogojne verjetnosti glede izzid prvega testa. V velikem številu raziskav si na tak način pomagamo pri izbiri neodvisnih spremenljivk za končni model. Torej za vsako izmed neodvisnih spremenljivk se izvede regresija in na podlagi tega določi katere spremenljivke bomo vključili v glavni model. Zato nas zanima s kašno verjetnostjo bomo spremenljivko s takšnim načinom pravilno izločili. To nam pove P(zavrneM | zavrneU). 
+Opazujemo velikost testa (Tabela~\ref{table:4}, ~\ref{table:6}) in moč (Tabela~\ref{table:5}, ~\ref{table:7}). Notacija P(zavrneX) predstavlja delež zavrnjenih ničelnih hipotez glede na tip modela. U predstavlja model, ko upoštevamo le informacije o posameznem stadiju/zapletu, M pa predstavlja model z vsemi informacijami. Iz simulacije smo določili še verjetnosti, da oba testa hkrati zavrneta ničelno hipotezo, ter pogojne verjetnosti glede izid prvega testa. V velikem številu raziskav si na tak način pomagamo pri izbiri neodvisnih spremenljivk za končni model. Torej za vsako izmed neodvisnih spremenljivk se izvede regresija in na podlagi tega določi katere spremenljivke bomo vključili v glavni model. Zato nas zanima s kakšno verjetnostjo bomo spremenljivko s takšnim načinom pravilno izločili. To nam pove P(zavrneM | zavrneU). 
 \subsection{Stadij}
-Pri modeliranju posameznih stadijev, je v resnici naša ničelna hipoteza, da stadijN nima vpliva na tip operacije, raziskovalno vprašanje pa se nanaša na stadij kot celota. Test je torej nesmiseln že z vidika raziskovalnega vprašanja. To se vidi tudi pri moči testa (Tabela~\ref{table:5}), kjer je moč pri pravem modelu v primerjavi z močjo posameznega modela precej večja, kot pri posameznih stadijih, še posebaj kjer je $\beta$ blizu 0.
+Pri modeliranju posameznih stadijev, je v resnici naša ničelna hipoteza, da stadijN nima vpliva na tip operacije, raziskovalno vprašanje pa se nanaša na stadij kot celota. Test je torej nesmiseln že z vidika raziskovalnega vprašanja. To se vidi tudi pri moči testa (Tabela~\ref{table:5}), kjer je moč pri pravem modelu v primerjavi z močjo posameznega modela precej večja, kot pri posameznih stadijih, še posebej kjer je $\beta$ blizu 0.
 
-Vidimo, da če gledamo velikosti posameznih testov so vsi približno 0.05. Rezultati P(zavrneM | zavrneU) nam jasno povejo, da s takšnim načinom modeliranja, v določenih primerih spremenljivke po krivem izključimo v tudi do 60\% primerih. Velja seveda tudi obratno, torej če je spremenljivka značilna v pravilnem modelu, ni nujno da bo značilna v primeru testiranja posameznih stadijev.
+Vidimo, da če gledamo velikosti posameznih testov so vsi približno 0.05. Rezultati P(zavrneM | zavrneU) nam jasno povedo, da s takšnim načinom modeliranja, v določenih primerih spremenljivke po krivem izključimo v tudi do 60\% primerih. Velja seveda tudi obratno, torej če je spremenljivka značilna v pravilnem modelu, ni nujno da bo značilna v primeru testiranja posameznih stadijev.
 
 <<echo=FALSE, results=tex>>=
 print(xtable(table.list$stadij_H0,
@@ -244,7 +244,7 @@ print(xtable(table.list$stadij_HA,
 \clearpage
 \newpage
 \subsection{Zaplet}
-Pri testiranju z modelom s posameznim zapletom testiramo ali en tip operacije povzroča manj zapletov. Polni model tesitra enako hipotezo, vendar ob upoštevanju vseh drugih zapletov. V primeru zapletov, ki so neodvisno generirani, vidimo da je težava, ki smo jo izpostavili veliko manj prisotna, oziroma je skladanje z načinom, ko smo upoštevali posamezne zaplete in ko smo upoštevali vse zaplete, veliko večje (85\%). Ko testiramo hipoteze pod alternativno hipotezo opazimo, da je moč testa, ko upoštevamo vse zaplete večja, kot pri modelih s posameznimi zapleti. Seveda pa se zavedamo, da imamo v tem primeru teževo s večkratnim testiranjem hipotez, zato so velikosti p-vrednosti prevelike.
+Pri testiranju z modelom s posameznim zapletom testiramo ali en tip operacije povzroča manj zapletov. Polni model testira enako hipotezo, vendar ob upoštevanju vseh drugih zapletov. V primeru zapletov, ki so neodvisno generirani, vidimo da je težava, ki smo jo izpostavili veliko manj prisotna, oziroma je skladanje z načinom, ko smo upoštevali posamezne zaplete in ko smo upoštevali vse zaplete, veliko večje (85\%). Ko testiramo hipoteze pod alternativno hipotezo opazimo, da je moč testa, ko upoštevamo vse zaplete večja, kot pri modelih s posameznimi zapleti. Seveda pa se zavedamo, da imamo v tem primeru težavo s večkratnim testiranjem hipotez, zato so velikosti p-vrednosti prevelike.
 
 <<echo=FALSE, results=tex>>=
 print(xtable(table.list$zaplet_H0,
@@ -265,6 +265,6 @@ print(xtable(table.list$zaplet_HA,
 
 \newpage
 \section{Zaključek}
-Z simulacijami smo primerjali dva načina testiranja hipotez. Prvič smo testirali tako, da smo za vsako spremenljivko naredili svoj model, drugič pa smo v model vključili vse spremenljivke. Teste smo izvedli v dveh primerih, ko so podatki med seboj odvisni in neodvisni. Rezultati naših sklepanj so se skladali s pričakovanimi rezultati. Ugotovili smo torej, da način testiranja, ko modeliramo le posamezne spremenljivke ni pravilen in je zavajujoč. Največjo napako s takšnim sklepanjem naredimo, ko so spremenljivke med seboj odvisne, v primeru neodvisnih spremenljivk pa je napaka precej manjša (oziroma ujemanje modelov večje). Kljub večjem ujemanju načina testiranje pri neodvisnih podatkih, opazimo, da je moč pri načini testiranje, ko vključimo vse spremnljvike večja kot pri modelih s posameznimi spremenljivkami. 
+Z simulacijami smo primerjali dva načina testiranja hipotez. Prvič smo testirali tako, da smo za vsako spremenljivko naredili svoj model, drugič pa smo v model vključili vse spremenljivke. Teste smo izvedli v dveh primerih, ko so podatki med seboj odvisni in neodvisni. Rezultati naših sklepanj so se skladali s pričakovanimi rezultati. Ugotovili smo torej, da način testiranja, ko modeliramo le posamezne spremenljivke ni pravilen in je zavajajoč. Največjo napako s takšnim sklepanjem naredimo, ko so spremenljivke med seboj odvisne, v primeru neodvisnih spremenljivk pa je napaka precej manjša (oziroma ujemanje modelov večje). Kljub večjem ujemanju načina testiranje pri neodvisnih podatkih, opazimo, da je moč pri načini testiranje, ko vključimo vse spremenljivke večja kot pri modelih s posameznimi spremenljivkami. 
 
 \end{document}
